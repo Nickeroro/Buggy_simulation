@@ -18,14 +18,22 @@ if __name__ == "__main__":
     ctrl.inPlaceTurnLeft(rb, 90.0)
 
     ctrl.goLineOdometer(rb, dist=0.72, speed=50)
-    ctrl.inPlaceTurnRight(rb, 109.0)
+    ctrl.inPlaceTurnRight(rb, 100.0)
 
     ctrl.goLineOdometer(rb, dist=0.75, speed=50)
     ctrl.inPlaceTurnRight(rb, 90.0)
 
     #ctrl.goLineOdometer(rb, dist=0.76, speed=100)
 
-    ctrl.followWalls(rb)
+    ctrl.followWallsLeft(rb)
+    ctrl.inPlaceTurnRight(rb, 95.0)
+
+    ctrl.goLineOdometer(rb, dist=0.3, speed=50)
+    ctrl.followWallsRight(rb)
+
+    ctrl.inPlaceTurnRight(rb, 90.0)
+    ctrl.goLineOdometer(rb, dist=0.3, speed=50)
+    ctrl.followWallsRight(rb)
 
     # safe end : stop the robot, then stop the simulator
     rb.stop()

@@ -107,7 +107,7 @@ class RobotControl:
             time.sleep(dt)
         rb.stop()
 
-    def followWalls(self, rb, setPoint=0.5, nominalSpeed=50):
+    def followWallsLeft(self, rb, setPoint=0.5, nominalSpeed=50):
         kp = 10
         kd = 1000
         lastError = 0
@@ -117,26 +117,64 @@ class RobotControl:
             distFront = rb.get_sonar('front')
             distFront = filter_sonar.median_filter(distFront)
 
-            while distFront > 0.5 or distFront < 0.2:
-                print(distFront)
-                distWall = rb.get_sonar('left')
-                distWall = filter_sonar.median_filter(distWall)
+            print(distFront)
+            distWall = rb.get_sonar('left')
+            distWall = filter_sonar.median_filter(distWall)
 
-                controlError = setPoint - distWall
-                if deriveOk:
-                    deriveError = controlError - lastError
-                    deltaSpeed = kp * controlError + kd * deriveError
-                else:
-                    deltaSpeed = kp * controlError
+            controlError = setPoint - distWall
+            if deriveOk:
+                deriveError = controlError - lastError
+                deltaSpeed = kp * controlError + kd * deriveError
+            else:
+                deltaSpeed = kp * controlError
 
-                deltaSpeedMax = 20
-                if deltaSpeed > deltaSpeedMax:
-                    deltaSpeed = deltaSpeedMax
-                elif deltaSpeed < -deltaSpeedMax:
-                    deltaSpeed = -deltaSpeedMax
+            deltaSpeedMax = 20
+            if deltaSpeed > deltaSpeedMax:
+                deltaSpeed = deltaSpeedMax
+            elif deltaSpeed < -deltaSpeedMax:
+                deltaSpeed = -deltaSpeedMax
 
-                rb.set_speed(nominalSpeed + deltaSpeed, nominalSpeed - deltaSpeed)
-                lastError = controlError
-                deriveOk = True
+            rb.set_speed(nominalSpeed + deltaSpeed, nominalSpeed - deltaSpeed)
+            lastError = controlError
+            deriveOk = True
 
-        rb.stop()
+            if distFront > 0.2 and distFront < 0.44:
+                rb.stop()
+                break
+
+
+    def followWallsRight(self, rb, setPoint=0.5, nominalSpeed=50):
+        kp = 10
+        kd = 1000
+        lastError = 0
+        deriveOk = False
+        filter_sonar = flt.SonarFilter()
+        while True:
+            distFront = rb.get_sonar('front')
+            distFront = filter_sonar.median_filter(distFront)
+
+            distWall = rb.get_sonar('right')
+            distWall = filter_sonar.median_filter(distWall)
+
+            print(distWall)
+
+            controlError = setPoint - distWall
+            if deriveOk:
+                deriveError = controlError - lastError
+                deltaSpeed = kp * controlError + kd * deriveError
+            else:
+                deltaSpeed = kp * controlError
+
+            deltaSpeedMax = 20
+            if deltaSpeed > deltaSpeedMax:
+                deltaSpeed = deltaSpeedMax
+            elif deltaSpeed < -deltaSpeedMax:
+                deltaSpeed = -deltaSpeedMax
+
+            rb.set_speed(nominalSpeed - deltaSpeed, nominalSpeed + deltaSpeed)
+            lastError = controlError
+            deriveOk = True
+
+            if distWall == 0:
+                rb.stop()
+                break
