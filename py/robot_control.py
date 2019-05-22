@@ -143,15 +143,15 @@ class RobotControl:
                 break
 
 
-    def followWallsRight(self, rb, setPoint=0.5, nominalSpeed=50):
+    def followWallsRight(self, rb, setPoint=0.5, nominalSpeed=25):
         kp = 10
         kd = 1000
         lastError = 0
         deriveOk = False
         filter_sonar = flt.SonarFilter()
         while True:
-            distFront = rb.get_sonar('front')
-            distFront = filter_sonar.median_filter(distFront)
+            #distFront = rb.get_sonar('front')
+            #distFront = filter_sonar.median_filter(distFront)
 
             distWall = rb.get_sonar('right')
             distWall = filter_sonar.median_filter(distWall)
@@ -175,6 +175,6 @@ class RobotControl:
             lastError = controlError
             deriveOk = True
 
-            if distWall == 0:
+            if distWall == 0 :
                 rb.stop()
                 break
